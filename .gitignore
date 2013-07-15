@@ -13,3 +13,12 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+.rvmrc
+.ruby-version
+tags
+Gemfile.lock
+*.swp
+dump.rdb
+.rbx
+coverage/
+.sass-cache/
