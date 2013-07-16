@@ -11,6 +11,6 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://rubygems.org/gems/sqskiq'
 
   s.add_dependency "celluloid", "~> 0.14.1"
-  s.add_dependency "aws-sdk", "~> 1.11.3"
+  s.add_dependency "aws-sdk", "~> 1.9.1"
 
 end

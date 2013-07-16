@@ -12,6 +12,8 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
+/sample-app/log/*.log
+/sample-app/db/development.sqlite3
 /tmp
 .rvmrc
 .ruby-version
