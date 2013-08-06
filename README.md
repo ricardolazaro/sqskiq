@@ -1,7 +1,7 @@
-# SQSKiq #
+# Sqskiq #
 
 High performance, [Sidekiq](http://sidekiq.org)-like Amazon SQS messages consumer. It uses
-(Celluloid)[http://celluloid.io] to handle concurrent tasks.
+[Celluloid](http://celluloid.io) to handle concurrent tasks.
 
 ## Usage
 
