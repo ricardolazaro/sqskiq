@@ -4,7 +4,7 @@ This is a very simple rails app that consumes messages from a SQS queue (called 
 
 == Getting Started
 
-1. Create a SQS queue called `test` with the (AWS console)[https://console.aws.amazon.com/sqs/home] and
+1. Create a SQS queue called `test` with the AWS console[https://console.aws.amazon.com/sqs/home] and
        add some messages to it.
 
 2. Configure the SQS queue on `config/initializers/sqskiq.rb`. Use `config/initializers/sqskiq.exemple.rb` as
