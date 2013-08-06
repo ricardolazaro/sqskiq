@@ -7,7 +7,7 @@ High performance, [Sidekiq](http://sidekiq.org)-like Amazon SQS messages consume
 
 See a simple but complete rails app at (`sample-app`)[sample-app] directory.
 
-### Instalation
+### Installation
 
 Add this line to your application's Gemfile:
 
@@ -21,7 +21,7 @@ Or install it yourself as:
 
     $ gem install sqskiq
 
-### Create a worker to cosume a queue
+### Create a worker to consume a queue
 
 For example, to print messages from the `test` queue, just create a worker like this one:
 
@@ -45,6 +45,20 @@ On rails apps, create a initializer (`config/initializers/qsqkiq.rb`):
     end
 
 where `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are your credentials.
+
+There are four thread pools:
+
+* Fetchers: to get messages from SQS (2 by default)
+* Batch processors: to manage a set of messages fetched from SQS (2 by default).
+* Processors: to process each message locally (20 by default)
+* Deleters: to inform to SQS that the message was consumed (2 by default)
+
+You can also configure the pool sizes:
+
+    ...
+    config.pools = { processor: 10, fetcher: 5 } # keep :batch_processor and :deleter defaults
+    ...
+
 
 ### Run it!
 
