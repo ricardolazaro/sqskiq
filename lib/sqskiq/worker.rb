@@ -1,3 +1,5 @@
+require 'sqskiq/core_ext'
+
 module Sqskiq
   module Worker
 

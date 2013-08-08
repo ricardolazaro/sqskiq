@@ -70,4 +70,7 @@ module Sqskiq
     @pools = pools.merge(params)
   end
 
+  def self.logger
+    @logger ||= ::Logger.new($stdout)
+  end
 end
