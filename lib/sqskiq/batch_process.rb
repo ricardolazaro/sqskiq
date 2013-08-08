@@ -14,7 +14,7 @@ module Sqskiq
     end
 
     def batch_process(messages)
-      p "processing #{messages.size} messages"
+      # Sqskiq.logger.debug "processing #{messages.size} messages"
 
       process_result = []
       messages.each do |message|

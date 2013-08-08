@@ -4,7 +4,7 @@ class SampleWorker
   sqskiq_options queue_name: :test
 
   def perform(message)
-    p "worker received #{message}"
+    p "worker received message: '#{message.body}'"
   end
 
 end
