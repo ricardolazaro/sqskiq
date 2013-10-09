@@ -9,8 +9,6 @@ module Sqskiq
     def initialize
       @manager = Celluloid::Actor[:manager]
       @processor = Celluloid::Actor[:processor]
-
-      subscribe_interrupt
     end
 
     def batch_process(messages)
@@ -31,16 +29,5 @@ module Sqskiq
 
       @manager.async.batch_process_done(success_messages)
     end
-
-    def subscribe_interrupt
-      subscribe('SIGINT', :interrupt)
-      subscribe('TERM', :interrupt)
-      subscribe('SIGTERM', :interrupt)
-    end
-
-    def interrupt(signal)
-      self.terminate
-    end
-
   end
 end

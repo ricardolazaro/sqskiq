@@ -24,3 +24,4 @@ dump.rdb
 .rbx
 coverage/
 .sass-cache/
+c.sh
