@@ -16,8 +16,8 @@ module Sqskiq
       @fetcher = Celluloid::Actor[:fetcher]
       @batch_processor = Celluloid::Actor[:batch_processor]
       @deleter = Celluloid::Actor[:deleter]
-      #TODO default value. Should be configurable
-      new_fetch(2)
+
+      new_fetch(@fetcher.size)
     end
 
     def fetch_done(messages)
@@ -25,7 +25,7 @@ module Sqskiq
     end
 
     def batch_process_done(messages)
-      @deleter.async.delete(messages) if @deleter.alive?
+      @deleter.async.delete(messages)
       new_fetch(1)
     end
 
@@ -38,7 +38,7 @@ module Sqskiq
     end
 
     def running?
-      not (@deleter.busy_size == 0 and @shutting_down)
+      not (@deleter.busy_size == 0 and @shutting_down and @batch_processor.busy_size == 0)
     end
 
     def subscribe_shutting_down
