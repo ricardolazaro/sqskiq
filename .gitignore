@@ -25,3 +25,4 @@ dump.rdb
 coverage/
 .sass-cache/
 c.sh
+Gemfile.lock
