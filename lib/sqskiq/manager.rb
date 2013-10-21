@@ -1,15 +1,14 @@
 require 'celluloid'
 require 'celluloid/autostart'
-
+require 'sqskiq/signal_handler'
 
 module Sqskiq
   class Manager
     include Celluloid
-    include Celluloid::Notifications
-
+    include Sqskiq::SignalHandler
+    
     def initialize
-      @shutting_down = false
-      subscribe_shutting_down
+      subscribe_for_shutdown
     end
 
     def bootstrap
@@ -33,18 +32,9 @@ module Sqskiq
       num.times { @fetcher.async.fetch unless @shutting_down }
     end
 
-    def shutting_down(signal)
-      @shutting_down = true
-    end
-
     def running?
       not (@deleter.busy_size == 0 and @shutting_down and @batch_processor.busy_size == 0)
     end
 
-    def subscribe_shutting_down
-      subscribe('SIGINT', :shutting_down)
-      subscribe('TERM', :shutting_down)
-      subscribe('SIGTERM', :shutting_down)
-    end
   end
 end

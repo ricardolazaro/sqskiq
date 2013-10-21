@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Sqskiq do
 
-  describe 'number processor is lesser than 2' do
+  describe 'number of processors is lesser than 2' do
     let(:options) { [ { processors: 1 }, ].sample }
     
     it 'uses the defaut value of 20' do

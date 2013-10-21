@@ -1,15 +1,15 @@
 require 'celluloid'
 require 'celluloid/autostart'
+require 'sqskiq/signal_handler'
 
 module Sqskiq
   class Processor
     include Celluloid
-    include Celluloid::Notifications
+    include Sqskiq::SignalHandler
 
     def initialize(worker_class)
       @worker_instance = worker_class.new
-      @shutting_down = false
-      subscribe_shutting_down
+      subscribe_for_shutdown
     end
 
     def process(message)
@@ -23,15 +23,6 @@ module Sqskiq
       end
       return { :success => result, :message => message }
     end
-
-    def shutting_down(signal)
-      @shutting_down = true
-    end
-
-    def subscribe_shutting_down
-      subscribe('SIGINT', :shutting_down)
-      subscribe('TERM', :shutting_down)
-      subscribe('SIGTERM', :shutting_down)
-    end
+    
   end
 end

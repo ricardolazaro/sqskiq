@@ -1,16 +1,16 @@
 require 'celluloid'
 require 'celluloid/autostart'
+require 'sqskiq/signal_handler'
 
 module Sqskiq
   class BatchProcessor
     include Celluloid
-    include Celluloid::Notifications
-
+    include Sqskiq::SignalHandler
+    
     def initialize
       @manager = Celluloid::Actor[:manager]
       @processor = Celluloid::Actor[:processor]
-      @shutting_down = false
-      subscribe_shutting_down
+      subscribe_for_shutdown
     end
 
     def batch_process(messages)
@@ -34,15 +34,6 @@ module Sqskiq
 
       @manager.async.batch_process_done(success_messages)
     end
-
-    def shutting_down(signal)
-      @shutting_down = true
-    end
-
-    def subscribe_shutting_down
-      subscribe('SIGINT', :shutting_down)
-      subscribe('TERM', :shutting_down)
-      subscribe('SIGTERM', :shutting_down)
-    end
   end
+  
 end

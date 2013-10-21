@@ -18,23 +18,7 @@ module Sqskiq
     Celluloid::Actor[:batch_processor] = @batch_processor = BatchProcessor.pool(:size => configured_pool_sizes[:num_batches])
     Celluloid::Actor[:deleter] = @deleter = Deleter.pool(:size => configured_pool_sizes[:num_deleters], :args => params)
 
-    trap('SIGTERM') do
-      @manager.publish('SIGTERM')
-      @batch_processor.publish('SIGTERM')
-      @processor.publish('SIGTERM')
-    end
-
-    trap('TERM') do
-      @manager.publish('TERM')
-      @batch_processor.publish('TERM')
-      @processor.publish('TERM')
-    end
-
-    trap('SIGINT') do
-      @manager.publish('SIGINT')
-      @batch_processor.publish('SIGINT')
-      @processor.publish('SIGINT')
-    end
+    configure_signal_listeners
 
     @manager.bootstrap
     while @manager.running? do
@@ -47,6 +31,16 @@ module Sqskiq
     @deleter.__shutdown__
 
     @manager.terminate
+  end
+  
+  def self.configure_signal_listeners
+    ['SIGTERM', 'TERM', 'SIGINT'].each do |signal|
+      trap(signal) do
+        @manager.publish('SIGTERM')
+        @batch_processor.publish('SIGTERM')
+        @processor.publish('SIGTERM')
+      end
+    end
   end
   
   def self.pool_sizes(options)

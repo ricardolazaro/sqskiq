@@ -5,7 +5,6 @@ require 'sqskiq/aws'
 module Sqskiq
   class Deleter
     include Celluloid
-    include Celluloid::Notifications
     include Sqskiq::AWS
 
     def initialize(aws_access_key_id, aws_secret_access_key, queue_name)
