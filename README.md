@@ -12,41 +12,41 @@ Getting Start
 
 1. Add sqskiq to your Gemfile:
 
-```ruby
-gem 'sqskiq'
-```
+  ```ruby
+  gem 'sqskiq'
+  ```
 
 2. Add an initializer `config/initializers/sqskiq.rb` with:
 
-```ruby
-Sqskiq.configure do |config|
-config.aws_access_key_id = 'AWS_ACCESS_KEY_ID'
-config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY'
-end
-```
+  ```ruby
+  Sqskiq.configure do |config|
+  config.aws_access_key_id = 'AWS_ACCESS_KEY_ID'
+  config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY'
+  end
+  ```
 
 3. Add a worker in `app/workers` to process messages asynchronously:
 
-```ruby
-class HardWorker
-include Sqskiq::Worker
+  ```ruby
+  class HardWorker
+  include Sqskiq::Worker
 
-sqskiq_options queue_name: :queue_test
+  sqskiq_options queue_name: :queue_test
 
-def perform(message)
-# do something
-end
-end
-```
+  def perform(message)
+  # do something
+  end
+  end
+  ```
 
   You can configure the number of worker using the param 'processors'. Ex: sqskiq_options queue_name: :queue_test, processors: 30
   OBS: Currently, the min number of processors is 2 and the default is 20. Any unacceptable value will end up using the default. 	
 
 4. Start sqskiq and consumes the queue:
 
-```ruby
-rails runner HardWorker.run
-```
+  ```ruby
+  rails runner HardWorker.run
+  ```
 
 Deploy
 ------
