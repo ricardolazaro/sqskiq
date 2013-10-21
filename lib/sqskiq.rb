@@ -54,7 +54,7 @@ module Sqskiq
     num_workers = (options[:processors].nil? || options[:processors].to_i < 2)? 20 : options[:processors]
     
     # each fetch brings up to 10 messages to process.
-    # the number of fetchers is the min number able to keep all
+    # the number of fetchers is a number able to keep all
     # workers handling messages
     # TODO: acctualy the min number must be greater than 2 because we are using
     # celluloid pool, but that will be changed!
