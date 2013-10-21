@@ -21,7 +21,7 @@ Getting Start
   ```ruby
   Sqskiq.configure do |config|
     config.aws_access_key_id = 'AWS_ACCESS_KEY_ID'
-    config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY'
+    config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY
   end
   ```
 
@@ -29,10 +29,10 @@ Getting Start
 
   ```ruby
   class HardWorker
-
-	sqskiq_options queue_name: :queue_test
-
     include Sqskiq::Worker
+
+    sqskiq_options queue_name: :queue_test
+
     def perform(message)
       # do something
     end
