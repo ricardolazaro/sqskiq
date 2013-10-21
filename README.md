@@ -20,8 +20,8 @@ Getting Start
 
   ```ruby
   Sqskiq.configure do |config|
-    config.aws_access_key_id = 'AWS_ACCESS_KEY_ID'
-    config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY'
+  config.aws_access_key_id = 'AWS_ACCESS_KEY_ID'
+  config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY'
   end
   ```
 
@@ -29,15 +29,16 @@ Getting Start
 
   ```ruby
   class HardWorker
-    include Sqskiq::Worker
+  include Sqskiq::Worker
 
-    sqskiq_options queue_name: :queue_test
+  sqskiq_options queue_name: :queue_test
 
-    def perform(message)
-      # do something
-    end
+  def perform(message)
+  # do something
+  end
   end
   ```
+
   You can configure the number of worker using the param 'processors'. Ex: sqskiq_options queue_name: :queue_test, processors: 30
   OBS: Currently, the min number of processors is 2 and the default is 20. Any unacceptable value will end up using the default. 	
 
