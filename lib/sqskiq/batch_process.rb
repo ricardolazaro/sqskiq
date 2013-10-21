@@ -14,8 +14,6 @@ module Sqskiq
     end
 
     def batch_process(messages)
-      p "processing #{messages.size} messages"
-
       process_result = []
       messages.each do |message|
         process_result << @processor.future.process(message)

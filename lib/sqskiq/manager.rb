@@ -33,7 +33,7 @@ module Sqskiq
     end
 
     def running?
-      not (@deleter.busy_size == 0 and @shutting_down and @batch_processor.busy_size == 0)
+      not (@shutting_down and @deleter.busy_size == 0 and @batch_processor.busy_size == 0)
     end
 
   end
