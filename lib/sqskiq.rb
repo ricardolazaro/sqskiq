@@ -8,19 +8,15 @@ require 'sqskiq/batch_process'
 module Sqskiq
 
   def self.bootstrap(options, worker_class)
-
     params = [ @aws_access_key_id, @aws_secret_access_key, options[:queue_name] ]
-    num_fetchers = options[:fetchers]  || 2
-    num_workers  = options[:processors] || 10
-    num_deleters = num_batches = num_fetchers
-
+    
+    configured_pool_sizes = pool_sizes(options)
+    
     Celluloid::Actor[:manager] = @manager = Manager.new
-    Celluloid::Actor[:fetcher] = @fetcher = Fetcher.pool(:size => num_fetchers, :args => params)
-    Celluloid::Actor[:processor] = @processor = Processor.pool(:size => num_workers, :args => worker_class)
-    Celluloid::Actor[:batch_processor] = @batch_processor = BatchProcessor.pool(:size => num_batches)
-    Celluloid::Actor[:deleter] = @deleter = Deleter.pool(:size => num_deleters, :args => params)
-
-    p "pid = #{Process.pid}"
+    Celluloid::Actor[:fetcher] = @fetcher = Fetcher.pool(:size => configured_pool_sizes[:num_fetchers], :args => params)
+    Celluloid::Actor[:processor] = @processor = Processor.pool(:size => configured_pool_sizes[:num_workers], :args => worker_class)
+    Celluloid::Actor[:batch_processor] = @batch_processor = BatchProcessor.pool(:size => configured_pool_sizes[:num_batches])
+    Celluloid::Actor[:deleter] = @deleter = Deleter.pool(:size => configured_pool_sizes[:num_deleters], :args => params)
 
     trap('SIGTERM') do
       @manager.publish('SIGTERM')
@@ -52,7 +48,25 @@ module Sqskiq
 
     @manager.terminate
   end
-
+  
+  def self.pool_sizes(options)
+    # for now, min processors should be 2
+    num_workers = (options[:processors].nil? || options[:processors].to_i < 2)? 20 : options[:processors]
+    
+    # each fetch brings up to 10 messages to process.
+    # the number of fetchers is the min number able to keep all
+    # workers handling messages
+    # TODO: acctualy the min number must be greater than 2 because we are using
+    # celluloid pool, but that will be changed!
+    num_fetchers = num_workers / 10
+    num_fetchers = num_fetchers + 1 if num_workers % 10 > 0
+    num_fetchers = 2 if num_fetchers < 2
+    
+    num_deleters = num_batches = num_fetchers
+    
+    { num_workers: num_workers, num_fetchers: num_fetchers, num_batches: num_batches, num_deleters: num_deleters }
+  end
+  
   def self.configure
     yield self
   end
