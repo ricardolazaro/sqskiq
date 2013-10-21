@@ -16,12 +16,12 @@ Getting Start
   gem 'sqskiq'
   ```
 
-2. Add an initializer file in config/initializers/sqskiq.rb
+2. Add an initializer `config/initializers/sqskiq.rb` with:
 
   ```ruby
   Sqskiq.configure do |config|
     config.aws_access_key_id = 'AWS_ACCESS_KEY_ID'
-    config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY
+    config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY'
   end
   ```
 
