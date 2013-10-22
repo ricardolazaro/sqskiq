@@ -38,11 +38,12 @@ Getting Start
       end
     end
   ```
+  OBS1: The message received by this worker is an instance of [AWS::SQS::ReceivedMessage](http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/SQS/ReceivedMessage.html)
 
-  You can configure the parallelism using the param 'processors'. Ex: 
+  OBS2: You can configure the parallelism using the param 'processors'. Ex: 
   `sqskiq_options queue_name: :queue_test, processors: 30`
   
-  OBS: Currently, the min number of processors is 2 and the default is 20. Any unacceptable value will end up using the default. 	
+  OBS3: Currently, the min number of processors is 2 and the default is 20. Any unacceptable value will end up using the default. 	
 
 4. Start sqskiq and consumes the queue:
 
