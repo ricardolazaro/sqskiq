@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/erichmachado/sqskiq.png?branch=master)](https://travis-ci.org/erichmachado/sqskiq)
+
 Sqskiq
 ======
 
