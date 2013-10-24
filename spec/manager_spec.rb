@@ -16,32 +16,31 @@ describe Sqskiq::Manager do
   describe '#running?' do
      
     context 'when the actor system is shutting down' do
-     let(:shutting_down) { true }
+      let(:shutting_down) { true }
      
-     describe 'if deleter is not empty' do
-       before { deleter.should_receive(:busy_size).and_return(1) }
-       
-       it { should be_running }
-     end
+      describe 'if deleter is not empty' do
+        before { deleter.should_receive(:busy_size).and_return(1) }
+ 
+        it { should be_running }
+      end
      
-     describe 'if batch_processor is not empty' do
-       before do 
-         deleter.should_receive(:busy_size).and_return(0) 
-         batch_processor.should_receive(:busy_size).and_return(1) 
-       end
+      describe 'if batch_processor is not empty' do
+        before do 
+          deleter.should_receive(:busy_size).and_return(0) 
+          batch_processor.should_receive(:busy_size).and_return(1) 
+        end
 
-       it { should be_running }
-     end
+        it { should be_running }
+      end
      
-     describe 'if batch_processor and deleter are empties' do
+      describe 'if batch_processor and deleter are empties' do
         before do 
           deleter.should_receive(:busy_size).and_return(0) 
           batch_processor.should_receive(:busy_size).and_return(0) 
         end
 
         it { should_not be_running }
-      end
-       
+      end    
     end
     
     context 'when the actor system is not shutting down' do
@@ -56,6 +55,7 @@ describe Sqskiq::Manager do
       end
       
     end
+
   end
 
 end
