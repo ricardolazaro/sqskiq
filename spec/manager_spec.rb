@@ -5,7 +5,6 @@ describe Sqskiq::Manager do
   let(:fetcher) { Object.new }
   let(:batch_processor) { Object.new }
   let(:shutting_down) { false }
-  subject = described_class.new
   
   before do
     subject.instance_variable_set(:@fetcher, fetcher)
