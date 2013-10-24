@@ -5,7 +5,6 @@ describe Sqskiq::Manager do
   let(:fetcher) { Object.new }
   let(:batch_processor) { Object.new }
   let(:shutting_down) { false }
-  subject = described_class.new
   
   before do
     subject.instance_variable_set(:@fetcher, fetcher)
@@ -17,38 +16,31 @@ describe Sqskiq::Manager do
   describe '#running?' do
      
     context 'when the actor system is shutting down' do
-     let(:shutting_down) { true }
+      let(:shutting_down) { true }
      
-     describe 'if deleter is not empty' do
-       before { deleter.should_receive(:busy_size).and_return(1) }
-       
-       it 'returns true' do
-         subject.running?.should be_true
-       end
-     end
+      describe 'if deleter is not empty' do
+        before { deleter.should_receive(:busy_size).and_return(1) }
+ 
+        it { should be_running }
+      end
      
-     describe 'if batch_processor is not empty' do
-       before do 
-         deleter.should_receive(:busy_size).and_return(0) 
-         batch_processor.should_receive(:busy_size).and_return(1) 
-       end
+      describe 'if batch_processor is not empty' do
+        before do 
+          deleter.should_receive(:busy_size).and_return(0) 
+          batch_processor.should_receive(:busy_size).and_return(1) 
+        end
 
-       it 'returns true' do
-         subject.running?.should be_true
-       end
-     end
+        it { should be_running }
+      end
      
-     describe 'if batch_processor and deleter are empties' do
+      describe 'if batch_processor and deleter are empties' do
         before do 
           deleter.should_receive(:busy_size).and_return(0) 
           batch_processor.should_receive(:busy_size).and_return(0) 
         end
 
-        it 'returns false' do
-          subject.running?.should be_false
-        end
-      end
-       
+        it { should_not be_running }
+      end    
     end
     
     context 'when the actor system is not shutting down' do
@@ -59,12 +51,11 @@ describe Sqskiq::Manager do
           batch_processor.stub(:busy_size).and_return(0) 
         end
 
-        it 'returns true' do
-          subject.running?.should be_true
-        end
+        it { should be_running }
       end
       
     end
+
   end
 
 end
