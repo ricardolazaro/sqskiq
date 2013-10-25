@@ -46,11 +46,12 @@ describe Sqskiq do
       let(:options) { { processors: Random.rand(2..10) } }
       
       it 'uses the the given value for the processors and apply (processors / 10) for other pool sizes' do
+        p options
         pool_sizes = Sqskiq.pool_sizes(options)
         pool_sizes[:num_workers].should eq(options[:processors])
-        pool_sizes[:num_fetchers].should eq((options[:processors] / 10) + 2)
-        pool_sizes[:num_batches].should eq((options[:processors] / 10) + 2)
-        pool_sizes[:num_deleters].should eq((options[:processors] / 10) + 2)
+        pool_sizes[:num_fetchers].should eq(2)
+        pool_sizes[:num_batches].should eq(2)
+        pool_sizes[:num_deleters].should eq(2)
       end
       
     end
