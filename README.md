@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/erichmachado/sqskiq.png?branch=master)](https://travis-ci.org/erichmachado/sqskiq)
+[![Build Status](https://travis-ci.org/ricardolazaro/sqskiq.png?branch=master)](https://travis-ci.org/erichmachado/sqskiq)
 
 Sqskiq
 ======
