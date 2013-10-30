@@ -6,11 +6,11 @@ describe Sqskiq do
     let(:options) { [ { processors: 1 }, ].sample }
     
     it 'uses the defaut value of 20' do
-      pool_sizes = Sqskiq.pool_sizes(options)
-      pool_sizes[:num_workers].should eq(20)
-      pool_sizes[:num_fetchers].should eq(2)
-      pool_sizes[:num_batches].should eq(2)
-      pool_sizes[:num_deleters].should eq(2)
+      config = Sqskiq.valid_config_from(options)
+      config[:num_workers].should eq(20)
+      config[:num_fetchers].should eq(2)
+      config[:num_batches].should eq(2)
+      config[:num_deleters].should eq(2)
     end
   end
   
@@ -20,11 +20,11 @@ describe Sqskiq do
       let(:options) { { processors: [ 20, 30, 40 ].sample } }
       
       it 'uses the the given value' do
-        pool_sizes = Sqskiq.pool_sizes(options)
-        pool_sizes[:num_workers].should eq(options[:processors])
-        pool_sizes[:num_fetchers].should eq(options[:processors] / 10)
-        pool_sizes[:num_batches].should eq(options[:processors] / 10)
-        pool_sizes[:num_deleters].should eq(options[:processors] / 10)
+        config = Sqskiq.valid_config_from(options)
+        config[:num_workers].should eq(options[:processors])
+        config[:num_fetchers].should eq(options[:processors] / 10)
+        config[:num_batches].should eq(options[:processors] / 10)
+        config[:num_deleters].should eq(options[:processors] / 10)
       end
       
     end
@@ -33,11 +33,11 @@ describe Sqskiq do
       let(:options) { { processors: [ 21, 31, 41 ].sample } }
       
       it 'uses the the given value for the processors and apply (processors / 10) + 1 for other pool sizes' do
-        pool_sizes = Sqskiq.pool_sizes(options)
-        pool_sizes[:num_workers].should eq(options[:processors])
-        pool_sizes[:num_fetchers].should eq((options[:processors] / 10) + 1)
-        pool_sizes[:num_batches].should eq((options[:processors] / 10) + 1)
-        pool_sizes[:num_deleters].should eq((options[:processors] / 10) + 1)
+        config = Sqskiq.valid_config_from(options)
+        config[:num_workers].should eq(options[:processors])
+        config[:num_fetchers].should eq((options[:processors] / 10) + 1)
+        config[:num_batches].should eq((options[:processors] / 10) + 1)
+        config[:num_deleters].should eq((options[:processors] / 10) + 1)
       end
       
     end
@@ -46,12 +46,11 @@ describe Sqskiq do
       let(:options) { { processors: Random.rand(2..10) } }
       
       it 'uses the the given value for the processors and apply (processors / 10) for other pool sizes' do
-        p options
-        pool_sizes = Sqskiq.pool_sizes(options)
-        pool_sizes[:num_workers].should eq(options[:processors])
-        pool_sizes[:num_fetchers].should eq(2)
-        pool_sizes[:num_batches].should eq(2)
-        pool_sizes[:num_deleters].should eq(2)
+        config = Sqskiq.valid_config_from(options)
+        config[:num_workers].should eq(options[:processors])
+        config[:num_fetchers].should eq(2)
+        config[:num_batches].should eq(2)
+        config[:num_deleters].should eq(2)
       end
       
     end

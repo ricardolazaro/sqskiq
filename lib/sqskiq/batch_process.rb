@@ -13,7 +13,7 @@ module Sqskiq
       subscribe_for_shutdown
     end
 
-    def batch_process(messages)
+    def process(messages)
       process_result = []
       messages.each do |message|
         process_result << @processor.future.process(message)
@@ -30,7 +30,7 @@ module Sqskiq
         end
       end
 
-      @manager.async.batch_process_done(success_messages)
+      @manager.async.batch_done(success_messages)
     end
   end
   

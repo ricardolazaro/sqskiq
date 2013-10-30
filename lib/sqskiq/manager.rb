@@ -13,17 +13,17 @@ module Sqskiq
 
     def bootstrap
       @fetcher = Celluloid::Actor[:fetcher]
-      @batch_processor = Celluloid::Actor[:batch_processor]
+      @batcher = Celluloid::Actor[:batcher]
       @deleter = Celluloid::Actor[:deleter]
 
       new_fetch(@fetcher.size)
     end
 
     def fetch_done(messages)
-      @batch_processor.async.batch_process(messages) unless @shutting_down
+      @batcher.async.process(messages) unless @shutting_down
     end
 
-    def batch_process_done(messages)
+    def batch_done(messages)
       @deleter.async.delete(messages)
       new_fetch(1)
     end
@@ -33,7 +33,7 @@ module Sqskiq
     end
 
     def running?
-      not (@shutting_down and @deleter.busy_size == 0 and @batch_processor.busy_size == 0)
+      not (@shutting_down and @deleter.busy_size == 0 and @batcher.busy_size == 0)
     end
 
   end
