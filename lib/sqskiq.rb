@@ -25,11 +25,6 @@ module Sqskiq
       sleep 2
     end
 
-    @fetcher.__shutdown__
-    @batch_processor.__shutdown__
-    @processor.__shutdown__
-    @deleter.__shutdown__
-
     @manager.terminate
   end
   
