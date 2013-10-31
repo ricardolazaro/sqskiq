@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'sqskiq'
-  s.version     = '0.0.3'
+  s.version     = '0.0.4'
   s.date        = '2013-06-01'
   s.summary     = "sqskiq"
   s.description = "Sidekiq-like Ruby background processing using Amazon SQS"
