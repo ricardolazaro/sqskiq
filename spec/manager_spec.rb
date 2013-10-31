@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Sqskiq::Manager do
+  subject { Sqskiq::Manager.new(Random.rand(1..100)) }
+  
   let(:deleter) { Object.new }
   let(:fetcher) { Object.new }
   let(:batcher) { Object.new }
@@ -14,7 +16,6 @@ describe Sqskiq::Manager do
   end
 
   describe '#running?' do
-     
     context 'when the actor system is shutting down' do
       let(:shutting_down) { true }
      
@@ -55,7 +56,60 @@ describe Sqskiq::Manager do
       end
       
     end
-
   end
+  
+  describe '#new_fetch' do
+    before do
+      subject.instance_variable_set(:@empty_queue, empty)
+      subject.instance_variable_set(:@empty_queue_throttle, 10)
+    end
+    
+    context 'if queue is not empty' do
+      let(:empty) { false }
+      
+      it 'applies a throttle of 0 seconds' do
+        Sqskiq::Manager.any_instance.should_receive(:after).with(0)
+        subject.new_fetch(1)
+      end
+    end
+    
+    context 'if queue is empty' do
+      let(:empty) { true }
+      
+      it 'applies a throttle of empty_queue_throttle seconds' do
+        Sqskiq::Manager.any_instance.should_receive(:after).with(10)
+        subject.new_fetch(1)
+      end
+    end
+  end
+  
+  describe '#fetch_done' do
+    
+    before { subject.instance_variable_set(:@empty_queue, empty) }
+    
+    context 'when at least one message has been received' do
+      let(:messages) { ['someMessage'] }
+      let(:empty) { true } 
+      
+      it 'sets @empty_queue to false and process the messages' do
+        batcher.should_receive(:async).and_return(batcher)
+        batcher.should_receive(:process).with(messages)
+        subject.fetch_done(messages)
+        subject.instance_variable_get(:@empty_queue).should be_false
+      end
+    end
+    
+    context 'when no messages are received' do
+      let(:messages) { [] }
+      let(:empty) { false } 
 
+      it 'sets @empty_queue to true and does not process the messages' do
+        batcher.should_receive(:async).and_return(batcher)
+        batcher.should_receive(:process).with(messages)
+        subject.fetch_done(messages)
+        subject.instance_variable_get(:@empty_queue).should be_true
+      end
+    end    
+  end
+  
 end

@@ -24,7 +24,8 @@ end
 
 gem 'jquery-rails'
 
-gem 'sqskiq'
+#gem 'sqskiq'
+gem 'sqskiq', :path => '..'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

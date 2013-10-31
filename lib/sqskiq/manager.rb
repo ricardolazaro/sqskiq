@@ -7,8 +7,11 @@ module Sqskiq
     include Celluloid
     include Sqskiq::SignalHandler
     
-    def initialize
-      subscribe_for_shutdown
+    @empty_queue = false
+    
+    def initialize(empty_queue_throttle)
+      @empty_queue_throttle = empty_queue_throttle
+      subscribe_for_shutdown      
     end
 
     def bootstrap
@@ -20,6 +23,7 @@ module Sqskiq
     end
 
     def fetch_done(messages)
+      @empty_queue = messages.empty?
       @batcher.async.process(messages) unless @shutting_down
     end
 
@@ -29,11 +33,17 @@ module Sqskiq
     end
 
     def new_fetch(num)
-      num.times { @fetcher.async.fetch unless @shutting_down }
+      after(throttle) do
+        num.times { @fetcher.async.fetch unless @shutting_down }
+      end
     end
 
     def running?
       not (@shutting_down and @deleter.busy_size == 0 and @batcher.busy_size == 0)
+    end
+    
+    def throttle
+      @empty_queue ? @empty_queue_throttle : 0
     end
 
   end
