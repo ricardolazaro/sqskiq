@@ -40,12 +40,15 @@ Getting Start
       end
     end
   ```
-  OBS1: The message received by this worker is an instance of [AWS::SQS::ReceivedMessage](http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/SQS/ReceivedMessage.html)
+  The message received by this worker is an instance of [AWS::SQS::ReceivedMessage](http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/SQS/ReceivedMessage.html)
 
-  OBS2: You can configure the parallelism using the param 'processors'. Ex: 
-  `sqskiq_options queue_name: :queue_test, processors: 30`
+  Configure the parallelism using the param **processors**: `sqskiq_options queue_name: :queue_test, processors: 30`
+  Currently, the min number of processors is 2 and the default is 20. Any unacceptable value will end up using the default. 	
   
-  OBS3: Currently, the min number of processors is 2 and the default is 20. Any unacceptable value will end up using the default. 	
+  Configure how long sqskiq will delay new fetches using the param **empty_queue_throttle** in seconds:
+  `sqskiq_options queue_name: :queue_test, empty_queue_throttle: 20 #for 20 seconds of delay`
+  If the queue got empty, sqskiq will wait *empty_queue_throttle* seconds to perform a new fetch. This can drastically reduce your sqs costs.
+  
 
 4. Start Sqskiq and consume the queue:
 
@@ -74,7 +77,6 @@ Tips and Limitations
 ### Future and TODO's
 
 * Implement a better retry policy (today the message will be retried forever)
-* Implement policies to reduce/eliminate costs for queues with low throughput
 * User can configure only one processor
 * Client side to send messages to SQS, handling batches
 * Better database integration with automatic cache clean
