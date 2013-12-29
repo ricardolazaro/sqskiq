@@ -7,8 +7,8 @@ module Sqskiq
     include Celluloid
     include Sqskiq::AWS
 
-    def initialize(aws_access_key_id, aws_secret_access_key, queue_name)
-      init_queue(aws_access_key_id, aws_secret_access_key, queue_name)
+    def initialize(queue_name, configuration = {})
+      init_queue(queue_name, configuration)
     end
 
     def delete(messages)

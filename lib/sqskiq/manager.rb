@@ -6,12 +6,12 @@ module Sqskiq
   class Manager
     include Celluloid
     include Sqskiq::SignalHandler
-    
+
     @empty_queue = false
-    
+
     def initialize(empty_queue_throttle)
       @empty_queue_throttle = empty_queue_throttle
-      subscribe_for_shutdown      
+      subscribe_for_shutdown
     end
 
     def bootstrap
@@ -41,7 +41,7 @@ module Sqskiq
     def running?
       not (@shutting_down and @deleter.busy_size == 0 and @batcher.busy_size == 0)
     end
-    
+
     def throttle
       @empty_queue ? @empty_queue_throttle : 0
     end

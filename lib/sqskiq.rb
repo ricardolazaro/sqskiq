@@ -6,28 +6,26 @@ require 'sqskiq/worker'
 require 'sqskiq/batch_process'
 
 module Sqskiq
-
-  ## 
   # Configures and starts actor system
   def self.bootstrap(worker_config, worker_class)
     config = valid_config_from(worker_config)
-    credentials = [ @aws_access_key_id, @aws_secret_access_key, config[:queue_name] ]
-    
+    credentials = [config[:queue_name], @configuration]
+
     Celluloid::Actor[:manager]   = @manager   = Manager.new(config[:empty_queue_throttle])
     Celluloid::Actor[:fetcher]   = @fetcher   = Fetcher.pool(:size => config[:num_fetchers], :args => credentials)
     Celluloid::Actor[:deleter]   = @deleter   = Deleter.pool(:size => config[:num_deleters], :args => credentials)
     Celluloid::Actor[:processor] = @processor = Processor.pool(:size => config[:num_workers], :args => worker_class)
     Celluloid::Actor[:batcher]   = @batcher   = BatchProcessor.pool(:size => config[:num_batches])
-    
+
     configure_signal_listeners
-    
+
     @manager.bootstrap
     while @manager.running? do
       sleep 2
     end
     @manager.terminate
   end
-  
+
   # Subscribes actors to receive system signals
   # Each actor when receives a signal should execute
   # appropriate code to exit cleanly
@@ -40,7 +38,7 @@ module Sqskiq
       end
     end
   end
-  
+
   ##
   # checks the provided configuration
   # and add the defaults when not specified
@@ -51,27 +49,22 @@ module Sqskiq
     num_fetchers = num_fetchers + 1 if num_workers % 10 > 0
     num_fetchers = 2 if num_fetchers < 2
     num_deleters = num_batches = num_fetchers
-        
-    { 
-      num_workers: num_workers, 
-      num_fetchers: num_fetchers, 
-      num_batches: num_batches, 
+
+    {
+      num_workers: num_workers,
+      num_fetchers: num_fetchers,
+      num_batches: num_batches,
       num_deleters: num_deleters,
       queue_name: worker_config[:queue_name],
       empty_queue_throttle: worker_config[:empty_queue_throttle] || 0
     }
   end
-  
+
   def self.configure
     yield self
   end
 
-  def self.aws_access_key_id=(value)
-    @aws_access_key_id = value
+  def self.configuration=(value)
+    @configuration = value
   end
-
-  def self.aws_secret_access_key=(value)
-    @aws_secret_access_key = value
-  end
-
 end
