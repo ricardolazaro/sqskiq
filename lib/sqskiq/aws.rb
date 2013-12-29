@@ -4,7 +4,7 @@ module Sqskiq
   module AWS
 
     def init_queue(aws_access_key_id, aws_secret_access_key, queue_name)
-      sqs = ::AWS::SQS.new(:access_key_id => aws_access_key_id, :secret_access_key => aws_secret_access_key)
+      sqs = ::AWS::SQS.new()
       @queue = sqs.queues.named(queue_name.to_s)
     end
 
