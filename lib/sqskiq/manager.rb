@@ -1,5 +1,3 @@
-require 'celluloid'
-require 'celluloid/autostart'
 require 'sqskiq/signal_handler'
 
 module Sqskiq

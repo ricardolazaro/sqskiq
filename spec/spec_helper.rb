@@ -1,1 +1,3 @@
 require 'sqskiq'
+
+Sqskiq.initialize!
