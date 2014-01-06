@@ -1,3 +1,5 @@
+require 'sqskiq/worker'
+
 module Sqskiq
   def self.initialize!
     require 'celluloid'
@@ -7,7 +9,6 @@ module Sqskiq
     require 'sqskiq/fetch'
     require 'sqskiq/process'
     require 'sqskiq/delete'
-    require 'sqskiq/worker'
     require 'sqskiq/batch_process'
   end
 
