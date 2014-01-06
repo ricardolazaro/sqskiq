@@ -80,4 +80,3 @@ Tips and Limitations
 * User can configure only one processor
 * Client side to send messages to SQS, handling batches
 * Better database integration with automatic cache clean
-* Load Celluloid only when the worker starts
