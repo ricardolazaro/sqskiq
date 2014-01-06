@@ -1,12 +1,10 @@
-require 'celluloid'
-require 'celluloid/autostart'
 require 'sqskiq/signal_handler'
 
 module Sqskiq
   class BatchProcessor
     include Celluloid
     include Sqskiq::SignalHandler
-    
+
     def initialize
       @manager = Celluloid::Actor[:manager]
       @processor = Celluloid::Actor[:processor]

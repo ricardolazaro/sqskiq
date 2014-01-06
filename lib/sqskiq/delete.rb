@@ -1,5 +1,3 @@
-require 'celluloid'
-require 'celluloid/autostart'
 require 'sqskiq/aws'
 
 module Sqskiq

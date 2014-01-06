@@ -1,13 +1,20 @@
-require "sqskiq/manager"
-require 'sqskiq/fetch'
-require 'sqskiq/process'
-require 'sqskiq/delete'
-require 'sqskiq/worker'
-require 'sqskiq/batch_process'
-
 module Sqskiq
+  def self.initialize!
+    require 'celluloid'
+    require 'celluloid/autostart'
+
+    require "sqskiq/manager"
+    require 'sqskiq/fetch'
+    require 'sqskiq/process'
+    require 'sqskiq/delete'
+    require 'sqskiq/worker'
+    require 'sqskiq/batch_process'
+  end
+
   # Configures and starts actor system
   def self.bootstrap(worker_config, worker_class)
+    initialize!
+
     config = valid_config_from(worker_config)
     credentials = [config[:queue_name], @configuration]
 
