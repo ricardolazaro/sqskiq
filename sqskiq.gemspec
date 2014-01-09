@@ -15,5 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency "celluloid", "~> 0.15.2"
   s.add_dependency "aws-sdk", "~> 1.9.1"
   s.add_dependency "activesupport"
+  s.add_dependency "json"
+
   s.add_development_dependency "rspec"
 end
