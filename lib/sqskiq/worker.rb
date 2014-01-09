@@ -4,11 +4,21 @@ require 'active_support/core_ext/class/attribute'
 module Sqskiq
   module Worker
     module ClassMethods
+      def connection
+        @sqs ||= ::AWS::SQS.new(Sqskiq.configuration)
+      end
+
+      def current_queue
+        connection.queues.
+          named(self.sqskiq_options_hash[:queue_name].to_s)
+      end
+
+      def size
+        current_queue.approximate_number_of_messages
+      end
+
       def perform_async(params)
-        sqs = ::AWS::SQS.new(Sqskiq.configuration)
-        sqs.queues.
-          named(self.sqskiq_options_hash[:queue_name].to_s).
-          send_message params.to_json
+        current_queue.send_message params.to_json
       end
 
       def run
