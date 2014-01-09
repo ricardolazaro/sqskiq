@@ -63,6 +63,10 @@ module Sqskiq
   def self.configure
     yield self
   end
+  
+  def self.configuration
+    @configuration
+  end
 
   def self.configuration=(value)
     @configuration = value
