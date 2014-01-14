@@ -18,6 +18,8 @@ module Sqskiq
         @worker_instance.perform(message)
       rescue Exception => e
         result = false
+      ensure
+        ::ActiveRecord::Base.clear_active_connections! if defined?(::ActiveRecord)
       end
       return { :success => result, :message => message }
     end
