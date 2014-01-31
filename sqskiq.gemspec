@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'sqskiq'
-  s.version     = '0.0.7'
+  s.version     = '0.0.8'
   s.date        = '2013-11-01'
   s.summary     = "sqskiq"
   s.description = "Sidekiq-like Ruby background processing using Amazon SQS"
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.homepage    = 'https://github.com/ricardolazaro/sqskiq'
 
-  s.add_dependency "celluloid", "~> 0.15.2"
+  s.add_dependency "celluloid"
   s.add_dependency "aws-sdk", "~> 1.9.1"
   s.add_dependency "activesupport"
   s.add_dependency "json"
