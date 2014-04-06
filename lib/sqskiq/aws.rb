@@ -15,6 +15,5 @@ module Sqskiq
     def delete_sqs_messages(messages)
       @queue.batch_delete(messages)
     end
-
   end
 end

@@ -25,24 +25,44 @@ module Sqskiq
     Celluloid::Actor[:processor] = @processor = Processor.pool(:size => config[:num_workers], :args => worker_class)
     Celluloid::Actor[:batcher]   = @batcher   = BatchProcessor.pool(:size => config[:num_batches])
 
-    configure_signal_listeners
-
-    @manager.bootstrap
-    while @manager.running? do
-      sleep 2
-    end
-    @manager.terminate
+    run!
+  rescue Interrupt
+    exit 0
   end
 
   # Subscribes actors to receive system signals
   # Each actor when receives a signal should execute
   # appropriate code to exit cleanly
-  def self.configure_signal_listeners
-    ['SIGTERM', 'TERM', 'SIGINT'].each do |signal|
-      Celluloid.trap(signal) do
+  def self.run!
+    self_read, self_write = IO.pipe
+
+    ['SIGTERM', 'TERM', 'SIGINT'].each do |sig|
+      begin
+        trap sig do
+          self_write.puts(sig)
+        end
+      rescue ArgumentError
+        puts "Signal #{sig} not supported"
+      end
+    end
+
+    begin
+      @manager.bootstrap
+
+      while readable_io = IO.select([self_read])
+        signal = readable_io.first[0].gets.strip
+
         @manager.publish('SIGTERM')
         @batcher.publish('SIGTERM')
         @processor.publish('SIGTERM')
+
+        while @manager.running?
+          sleep 2
+        end
+
+        @manager.terminate
+
+        break
       end
     end
   end
