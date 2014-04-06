@@ -39,7 +39,7 @@ module Sqskiq
   # appropriate code to exit cleanly
   def self.configure_signal_listeners
     ['SIGTERM', 'TERM', 'SIGINT'].each do |signal|
-      trap(signal) do
+      Celluloid.trap(signal) do
         @manager.publish('SIGTERM')
         @batcher.publish('SIGTERM')
         @processor.publish('SIGTERM')
@@ -71,7 +71,7 @@ module Sqskiq
   def self.configure
     yield self
   end
-  
+
   def self.configuration
     @configuration
   end
