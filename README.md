@@ -55,6 +55,12 @@ Getting Start
   ```ruby
     rails runner HardWorker.run
   ```
+  
+5. Publish message
+
+  ```ruby
+    YourWorker.perform_async(params)
+  ```
 
 Deploy
 ------
@@ -78,5 +84,5 @@ Tips and Limitations
 
 * Implement a better retry policy (today the message will be retried forever)
 * User can configure only one processor
-* Client side to send messages to SQS, handling batches
+* Handling batches
 * Better database integration with automatic cache clean
