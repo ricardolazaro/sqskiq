@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.homepage    = 'https://github.com/ricardolazaro/sqskiq'
 
-  s.add_dependency "celluloid", "~> 0.15.2"
+  s.add_dependency "celluloid"
   s.add_dependency "aws-sdk", "~> 1.36.1"
   s.add_dependency "activesupport"
   s.add_dependency "json"

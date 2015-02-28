@@ -8,10 +8,13 @@ module Sqskiq
     def initialize
       @manager = Celluloid::Actor[:manager]
       @processor = Celluloid::Actor[:processor]
+
       subscribe_for_shutdown
     end
 
     def process(messages)
+      return if @shutting_down
+
       process_result = []
       messages.each do |message|
         process_result << @processor.future.process(message)
@@ -19,7 +22,6 @@ module Sqskiq
 
       success_messages = []
       process_result.each do |result|
-
         unless @shutting_down
           value = result.value
           if value[:success]
@@ -31,5 +33,4 @@ module Sqskiq
       @manager.async.batch_done(success_messages)
     end
   end
-  
 end

@@ -1,3 +1,4 @@
+require 'sqskiq/rails'
 require 'sqskiq/worker'
 
 module Sqskiq
@@ -52,15 +53,22 @@ module Sqskiq
       while readable_io = IO.select([self_read])
         signal = readable_io.first[0].gets.strip
 
-        @manager.publish('SIGTERM')
-        @batcher.publish('SIGTERM')
-        @processor.publish('SIGTERM')
+        @manager.publish('SIGTERM') if @manager.alive?
+        @batcher.publish('SIGTERM') if @batcher.alive?
+        @deleter.publish('SIGTERM') if @deleter.alive?
+        @processor.publish('SIGTERM') if @processor.alive?
+        @fetcher.publish('SIGTERM') if @fetcher.alive?
+
 
         while @manager.running?
-          sleep 2
+          sleep 5
         end
 
-        @manager.terminate
+        @manager.terminate if @manager.alive?
+        @processor.terminate if @processor.alive?
+        @batcher.terminate if @batcher.alive?
+        @fetcher.terminate if @fetcher.alive?
+        @deleter.terminate if @deleter.alive?
 
         break
       end
