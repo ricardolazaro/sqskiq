@@ -6,5 +6,4 @@ class SampleWorker
   def perform(message)
     p "worker received #{message}"
   end
-
 end

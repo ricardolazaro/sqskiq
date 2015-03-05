@@ -21,9 +21,11 @@ Getting Start
 
 
   ```ruby
-    Sqskiq.configure do |config|
-      config.aws_access_key_id = 'AWS_ACCESS_KEY_ID'
-      config.aws_secret_access_key = 'AWS_SECRET_ACCESS_KEY'
+    Sqskiq.configure do |c|
+      c.configuration = {
+        aws_access_key_id: 'AWS_ACCESS_KEY_ID'
+        aws_secret_access_key: 'AWS_SECRET_ACCESS_KEY'
+      }
     end
   ```
 
@@ -55,6 +57,12 @@ Getting Start
   ```ruby
     rails runner HardWorker.run
   ```
+  
+5. Publish message
+
+  ```ruby
+    YourWorker.perform_async(params)
+  ```
 
 Deploy
 ------
@@ -78,6 +86,5 @@ Tips and Limitations
 
 * Implement a better retry policy (today the message will be retried forever)
 * User can configure only one processor
-* Client side to send messages to SQS, handling batches
+* Handling batches
 * Better database integration with automatic cache clean
-* Load Celluloid only when the worker starts

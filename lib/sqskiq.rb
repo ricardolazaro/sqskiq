@@ -1,46 +1,80 @@
-require "sqskiq/manager"
-require 'sqskiq/fetch'
-require 'sqskiq/process'
-require 'sqskiq/delete'
+require 'sqskiq/rails'
 require 'sqskiq/worker'
-require 'sqskiq/batch_process'
 
 module Sqskiq
+  def self.initialize!
+    require 'celluloid'
+    require 'celluloid/autostart'
 
-  ## 
+    require "sqskiq/manager"
+    require 'sqskiq/fetch'
+    require 'sqskiq/process'
+    require 'sqskiq/delete'
+    require 'sqskiq/batch_process'
+  end
+
   # Configures and starts actor system
   def self.bootstrap(worker_config, worker_class)
+    initialize!
+
     config = valid_config_from(worker_config)
-    credentials = [ @aws_access_key_id, @aws_secret_access_key, config[:queue_name] ]
-    
+    credentials = [config[:queue_name], @configuration]
+
     Celluloid::Actor[:manager]   = @manager   = Manager.new(config[:empty_queue_throttle])
     Celluloid::Actor[:fetcher]   = @fetcher   = Fetcher.pool(:size => config[:num_fetchers], :args => credentials)
     Celluloid::Actor[:deleter]   = @deleter   = Deleter.pool(:size => config[:num_deleters], :args => credentials)
     Celluloid::Actor[:processor] = @processor = Processor.pool(:size => config[:num_workers], :args => worker_class)
     Celluloid::Actor[:batcher]   = @batcher   = BatchProcessor.pool(:size => config[:num_batches])
-    
-    configure_signal_listeners
-    
-    @manager.bootstrap
-    while @manager.running? do
-      sleep 2
-    end
-    @manager.terminate
+
+    run!
+  rescue Interrupt
+    exit 0
   end
-  
+
   # Subscribes actors to receive system signals
   # Each actor when receives a signal should execute
   # appropriate code to exit cleanly
-  def self.configure_signal_listeners
-    ['SIGTERM', 'TERM', 'SIGINT'].each do |signal|
-      trap(signal) do
-        @manager.publish('SIGTERM')
-        @batcher.publish('SIGTERM')
-        @processor.publish('SIGTERM')
+  def self.run!
+    self_read, self_write = IO.pipe
+
+    ['SIGTERM', 'TERM', 'SIGINT'].each do |sig|
+      begin
+        trap sig do
+          self_write.puts(sig)
+        end
+      rescue ArgumentError
+        puts "Signal #{sig} not supported"
+      end
+    end
+
+    begin
+      @manager.bootstrap
+
+      while readable_io = IO.select([self_read])
+        signal = readable_io.first[0].gets.strip
+
+        @manager.publish('SIGTERM') if @manager.alive?
+        @batcher.publish('SIGTERM') if @batcher.alive?
+        @deleter.publish('SIGTERM') if @deleter.alive?
+        @processor.publish('SIGTERM') if @processor.alive?
+        @fetcher.publish('SIGTERM') if @fetcher.alive?
+
+
+        while @manager.running?
+          sleep 5
+        end
+
+        @manager.terminate if @manager.alive?
+        @processor.terminate if @processor.alive?
+        @batcher.terminate if @batcher.alive?
+        @fetcher.terminate if @fetcher.alive?
+        @deleter.terminate if @deleter.alive?
+
+        break
       end
     end
   end
-  
+
   ##
   # checks the provided configuration
   # and add the defaults when not specified
@@ -51,27 +85,26 @@ module Sqskiq
     num_fetchers = num_fetchers + 1 if num_workers % 10 > 0
     num_fetchers = 2 if num_fetchers < 2
     num_deleters = num_batches = num_fetchers
-        
-    { 
-      num_workers: num_workers, 
-      num_fetchers: num_fetchers, 
-      num_batches: num_batches, 
+
+    {
+      num_workers: num_workers,
+      num_fetchers: num_fetchers,
+      num_batches: num_batches,
       num_deleters: num_deleters,
       queue_name: worker_config[:queue_name],
       empty_queue_throttle: worker_config[:empty_queue_throttle] || 0
     }
   end
-  
+
   def self.configure
     yield self
   end
 
-  def self.aws_access_key_id=(value)
-    @aws_access_key_id = value
+  def self.configuration
+    @configuration
   end
 
-  def self.aws_secret_access_key=(value)
-    @aws_secret_access_key = value
+  def self.configuration=(value)
+    @configuration = value
   end
-
 end
